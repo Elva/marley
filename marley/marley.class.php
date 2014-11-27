@@ -131,7 +131,7 @@ class Marley {
         // Add all shared objects as context's properties.
         foreach($this->shared_objects as $name => $object) {
             if(!$context->$name) {
-                $context->$name = $object;
+                $context->$name = is_callable($object) ? $object->bindTo($context) : $object;
             }
         }
 
