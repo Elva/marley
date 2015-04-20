@@ -101,7 +101,9 @@ class Marley {
     private function map($method, $route, $callback, $route_options) {
         if ($_SERVER['REQUEST_METHOD'] === $method && $match = $this->url_route->match($route)) {
             if (is_array($match['params'])) {
-                $_GET = array_merge($_GET, $match['params']);
+                foreach ($match['params'] as $key => $value) {
+                    $_GET[$key] = $value;
+                }
             }
             $this->run($callback, $match['params'], $route_options);
             // Currently we don't support route passing, 
