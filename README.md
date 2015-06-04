@@ -1,6 +1,6 @@
 Marley
 ======
-Super-minimalistic, Sinatra/Rails-inspired PHP micro-framework  
+Super-minimalist, Sinatra/Rails-inspired PHP micro-framework  
 for solving common web application development problems:  
 code organization, routing and templating.  
 http://marley.elva.org  
