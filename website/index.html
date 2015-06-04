@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Marley</title>
+    <meta charset="utf-8" />
+    <link href="twilight.css" rel="stylesheet" type="text/css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+          height: 100%;
+        }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, sans-serif;
+            background: #222;
+            color: #555;
+            font-size: 14px;
+        }
+        .wrapper {
+            position: relative;
+            width: 662px;
+            margin: 0 auto;
+        }
+        p {
+            margin: 20px 0;
+        }
+        a {
+            color: #777;
+            text-decoration: underline;
+        }
+        a:hover {
+            color: #999;
+        }
+
+        /* Header */
+        .header {
+            width: 100%;
+            min-height: 100%;
+            text-align: center;
+        }
+        .header .wrapper {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            left: 0;
+            margin-top: -220px;
+        }
+        .header .version {
+            position: absolute;
+            top: 152px;
+            left: 283px;
+            font-weight: 300;
+            font-size: 12px;
+        }
+        .header h2 {
+            margin-top: 100px;
+            font-size: 24px;
+            font-weight: 100;
+            text-align: center;
+        }
+        .header a {
+            color: #555;
+            /*text-decoration: none;*/
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid #333;
+            padding: 20px 0;
+            height: 100px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        /* Code Sections */
+        .code {
+            margin-bottom: 200px;
+        }
+        .code h3 {
+            color: #fff;
+            font-weight: normal;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .code h4 {
+            color: #ffae00;
+            color: #fff;
+            font-size: 14px;
+            margin: 50px 0 17px;
+            font-weight: normal;
+        }
+        pre.no-color {
+            color: #555;
+        }
+        pre {
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        /* Rainbow Overrides */
+        pre .keyword, pre .storage {
+            color: #b9653c;
+        }
+        pre .variable {
+            color: #6b84af;
+        }
+        pre .function, pre .support {
+            color: #ffae00;
+        }
+        pre .tag, pre .tag-name,
+        pre code[data-language="html"] .operator {
+            color: #783939;
+        }
+        pre .attribute {
+            color: #913838;
+        }
+        pre code[data-language="html"] .string.quote,
+        pre code[data-language="html"] .string.value {
+            color: #b9755a;
+        }
+        pre .source.php.embedded {
+            color: #d8af56;
+        }
+    </style>
+    <script src="rainbow-custom.min.js"></script>
+</head>
+<body>
+
+    <a href="https://github.com/ElvaTeam/marley"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+    
+    <div class="header">
+        <div class="wrapper">
+            <img src="logo.png" />
+            <div class="version">from <a href="http://elva.org" target="_blank">Elva</a> | Version: 0.4 | Licence: MIT</div>
+            <h2>
+                Fast, super-minimalistic, Sinatra/Rails-inspired PHP micro-framework for solving common web application development problems: <br />code organization, routing and templating.
+            </h2>
+        </div>
+    </div>
+
+    
+    <div class="wrapper code">
+        <h3>The Goal</h3>
+        <p>
+            There are literaly thousands of frameworks out there for PHP and other languages. 
+            Most of them are inspired by either the powerful structure of Rails or by the simplicity of Sinatra. 
+            <br /><br />
+            The goal of this project to is to create a standalone micro-framework that is just under 500 lines of source code and 
+            allows you to manage core areas of web-app development (code organization, routing and templating) in <b>both</b> the Rails and Sinatra way. 
+            <br /><br />
+            How you'll fetch records from your database or what ORM you will use, we leave up to you. 
+        </p>
+    </div>
+
+
+
+<div class="wrapper code">
+<h3>Setup</h3>
+<p>
+After you <a href="#webserver-configuration">configure</a> your web server to send all requests to the index.php, you're ready to start jammin'!
+</p>
+<pre><code data-language="php">require_once 'marley/marley.class.php';
+
+$app = new Marley();</code></pre>
+
+<h4>Marley settings</h4>
+<p>Of course, you will be able to easily change Marley's settings to match your needs. The default settings are:</p>
+<pre><code data-language="php">$app->config([
+    'base_url'                => null, // Marley figures it out.
+    'root_dir'                => $_SERVER['DOCUMENT_ROOT'],
+    'templates_dir'           => '/views',
+    'layouts_dir'             => '/views/layouts',
+    'layout'                  => 'main',
+    'extension'               => '.html.php',
+    'controller_dir'          => '/controllers',
+    'controller_file_suffix'  => '_controller.php',
+    'controller_class_suffix' => 'Controller'
+]);</code></pre>
+<p>The meaning of each of these settings will become clear in later sections.</p>
+</div>
+
+
+
+<div class="wrapper code">
+<h3>Sinatra Flavored Syntax</h3>
+<p>Let's start with a Sinatra-style syntax. Along the way, we will explore Marley's two core features: <br /> routing with parameters and templating.</p>
+<pre class="no-color"><code>/app
+  /views
+    index.html.php
+  index.php</code></pre>
+
+<p>
+The code below will match the "root" request, execute the callback function and 
+render a template inside the "/views" directory called "index.html.php"
+</p>
+
+<pre><code data-language="php"># index.php
+
+$app->get('/', function() {
+    $this->data->name = 'Bob';
+    $this->render('index');
+});</code></pre>
+
+<p>
+    Every property you assign to <code>$this->data</code> object inside a callback function becomes a variable inside a template.
+    By default, Marley assumes that all templates are located inside the "/views" directory.
+</p>
+
+<pre><code data-language="html">&lt;!-- /views/index.html.php --&gt;
+
+&lt;div class=&quot;container&quot;&gt;
+    &lt;h2&gt;The name is: &lt;?=$name?&gt;&lt;/h2&gt;
+&lt;/div&gt;</code></pre>
+
+<p>The resulting rendered markup will look like this:</p>
+<pre><code data-language="html">&lt;div class=&quot;container&quot;&gt;
+    &lt;h2&gt;The name is: Bob&lt;/h2&gt;
+&lt;/div&gt;</code></pre>
+
+
+<h4>Parameters (dynamic parts of a route)</h4>
+
+<p>
+    Parameters in a route start with a colon `:` symbol. <br />
+    The values of each route parameter are then passed to a callback function as arguments. 
+</p>
+
+<p>
+    The example below will match requests in the following way: <br />
+    <code>/artist/marley/45</code> <br />
+    <code>/artist/queen/46</code> <br />
+    <code>/artist/coldplay/77</code>
+</p>
+
+<pre><code data-language="php"># index.php
+
+$app->get('/artist/:name/:id', function($name, $id) {
+    // make a database query or something to get artist's info.
+    $this->data->artist = get_data_from_db_by($id);
+    $this->data->name = $name;
+
+    $this->render('artist');
+});</code></pre>
+
+<pre><code data-language="html">&lt;!-- /views/artist.html.php --&gt;
+
+&lt;div class=&quot;artist-page&quot;&gt;
+    &lt;h2&gt;&lt;?=$name?&gt;&lt;/h2&gt;
+    &lt;p&gt;&lt;?=$artist[&apos;genre&apos;]?&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;?=$artist[&apos;upcoming_tour&apos;]?&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;?=$artist[&apos;number_of_albums&apos;]?&gt;&lt;/p&gt;
+    etc...
+&lt;/div&gt;</code></pre>
+
+<p>
+    For convenience, you can also access values of each route parameter in the $_GET array.
+</p>
+
+<pre><code data-language="php">$app->get('/artist/:name/:id', function() {
+    $this->data->artist = get_data_from_db_by($_GET[':id']);
+    $this->data->name = $_GET[':name'];
+
+    $this->render('artist');
+});</code></pre>
+
+
+<h4>Parameters with custom regex</h4>
+
+<p>
+    When you specify a route parameter, Marley by default uses the [^/]+ regex under the hood to match it. <br />
+    If you want more control or a specific match, you can specify a custom regex after the parameter name. <br /><br />
+    The syntax is: <br />
+    <em>:parameter_name(regular expression)</em>
+</p>
+
+<pre><code data-language="php">$app->get('/artist/:name/:id([0-9]+)', function($name, $id) {
+    // If this route matched, then $id is definitely a whole number.
+    // btw, you don't have to render a template, you can just print something.
+    print $name . ' and ' . $id;
+});</code></pre>
+
+
+<h4>Layouts</h4>
+
+<p>
+    If you're doing any kind of real-world web application, you will need layouts - 
+    template containers which contain repeated sections of your application - 
+    so you will not have to specify your link and script tags or a site header on every page.
+    <br /><br />
+    Layouts are like normal templates, except they contain a keyword <em>{{yield}}</em> 
+    which is replaced by the rendered template later.
+    <br /><br />
+    By default, Marley assumes that layouts are located inside "/views/layouts" 
+    directory and the default layout is called "main.html.php". <br /><br />
+    So if you have a directory structure like this:
+</p>
+
+<pre class="no-color"><code>/app
+  /views
+    /layouts
+      main.html.php
+    index.html.php
+  index.php</code></pre>
+
+
+<pre><code data-language="html">&lt;!-- /views/layouts/main.html.php --&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;App title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        {{yield}}
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<pre><code data-language="html">&lt;!-- /views/index.html.php --&gt;
+
+&lt;div class=&quot;welcome&quot;&gt;
+    &lt;h2&gt;Hello, &lt;?=$name?&gt;, do you wanna join us?&lt;/h2&gt;
+&lt;/div&gt;</code></pre>
+
+<p>
+    The code below will match requests like this: <br /> 
+    <code>/bob</code> <br /> 
+    <code>/nicole</code> <br /> 
+    <code>/mike</code> <br />
+</p>
+
+<pre><code data-language="php">$app->get('/:name', function($name) {
+    $this->data->name = ucfirst($name);
+    $this->render('index');
+});</code></pre>
+
+<p>
+    And automatically render the specified 'index' view inside the main layout. 
+    Since rendering a template inside a layout is the most common behaviour, you won't have to explicitly specify it.
+    Marley will do it automatically by default.
+    <br /><br />
+    The resulting markup will look like this:
+</p>
+
+<pre><code data-language="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;App title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;div class=&quot;welcome&quot;&gt;
+            &lt;h2&gt;Hello Bob, do you wanna join us?&lt;/h2&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<h4>Prevent automatic layouting</h4>
+<p>
+    If you have a main layout and you don't want your template to be rendered inside that layout, 
+    you can pass an option like this:
+</p>
+
+<pre><code data-language="php">$app->get('/:name', function($name) {
+    $this->data->name = ucfirst($name);
+    $this->render('index', ['layout' => false]);
+});</code></pre>
+
+<p>
+    The resulting markup on the same request will be:
+</p>
+
+<pre><code data-language="html">&lt;div class=&quot;welcome&quot;&gt;
+    &lt;h2&gt;Hello Bob, do you wanna join us?&lt;/h2&gt;
+&lt;/div&gt;</code></pre>
+
+<h4>Specifying a different layout</h4>
+<p>
+    In many cases, just one main layout will not be enough, so you'll create different layouts for different purposes. <br /><br />
+    Specifying what layout the template should be rendered in is very simple. 
+    The code below will render the 'index' template inside a <em>'/views/layouts/promo.html.php'</em> layout instead of the main layout.
+</p>
+
+<pre><code data-language="php">$app->get('/:name', function($name) {
+    $this->data->name = ucfirst($name);
+    $this->render('index', ['layout' => 'promo']);
+});</code></pre>
+
+<h4>What about POST requests?</h4>
+<p>
+    Nothing, really, just use a different method name. Everything else works the same way.
+</p>
+<pre><code data-language="php">$app->post('/track/submit', function() {
+    print_r($_POST);
+});</code></pre>
+</div>
+
+
+
+<div class="wrapper code">
+<h3>Rails Flavored Syntax</h3>
+<p>OK, You've come this far already. We have explored Marley's basic routing, layouting and templating functionality. Now it's time to dig into code organization.</p>
+
+<pre class="no-color"><code>/app
+  /controllers
+    artist_controller.php
+  /views
+    artist/
+      index.html.php
+      show.html.php
+      albums.html.php
+  index.php</code></pre>
+
+<p>
+    Sinatra-style routing is cool and simple, but creating large web applications requires 
+    a lot of code to be executed when a specific route is matched and specifying all that code 
+    inside a single callback function doesn't seems useful.
+</p>
+
+<p>
+    That's where Rails way of doing things comes in. On the surface the routing part looks even more simple than Sinatra's style. Take a look:
+</p>
+
+<pre><code data-language="php">$app->get('/', 'artist#index');
+$app->get('/artist/show/:id', 'artists#show');
+$app->get('/artist/album/:title([a-z]+)', 'artists#albums');</code></pre>
+
+<p>
+    There are however many things happening under the hood.
+</p>
+<p>
+    The main change, you'll notice, is that, instead of a callback function we specify a string, 
+    which has two parts in it, separated by a hash symbol. The part before the hash symbol is a controller name, 
+    the part after the hash is a method name inside that controller.
+</p>
+<p>
+    So, all above requests will be routed to the controller (a PHP class) called ArtistController, 
+    which is located inside the "/controllers" directory. 
+    <br /><br />
+    By default, Marley assumes that 
+    all controllers are located inside the "/controllers" directory and each file has a suffix "_controller" after the name.
+    <br /><br />
+    So the controller class inside <em>artist_controller.php</em> file will look like this:
+</p>
+
+<pre><code data-language="php">class ArtistController {
+
+    public function index() {
+
+    }
+
+    public function show($id) {
+        // make a database query or something to get artist's info.
+        $this->data->artist = get_data_from_db_by($id);
+    }
+
+    public function album($title) {
+        $this->data->title = $title;
+    }
+
+}</code></pre>
+
+<p>
+    Note that we're not specifying what template should be rendered when these methods are called. <br /><br />
+    Marley, by default, will render a template with the same name as method, from a template directory with the same name as the controller.
+</p>
+
+<p>So, if we have the main layout and the album templates like this:</p>
+
+<pre><code data-language="html">&lt;!-- /views/layouts/main.html.php --&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;App title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        {{yield}}
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<pre><code data-language="html">&lt;!-- /views/artist/album.html.php --&gt;
+
+&lt;div class=&quot;album-page&quot;&gt;
+    &lt;h2&gt;Title of the album is: &lt;?=$title?&gt;&lt;/h2&gt;
+&lt;/div&gt;</code></pre>
+
+<p>
+    All these requests: <br />
+    <code>/artist/album/jammin</code> <br />
+    <code>/artist/album/innuendo</code> <br />
+    <code>/artist/album/ghost</code> <br /> <br />
+    Will be routed to <em>album()</em> method inside <em>ArtistController</em> class and 
+    <em>/views/artist/album.html.php</em> template will be rendered. The resulting markup will look like this:</p>
+<pre><code data-language="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;App title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;div class=&quot;album-page&quot;&gt;
+            &lt;h2&gt;Title of the album is: Jammin&lt;/h2&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<p>
+    All automatic layouting functionality is the same as explained in the Sinatra section.
+</p>
+
+
+<h4>Resources Routes</h4>
+<p>
+    A resource route is a shortcut that maps common routes to a related method in a controller. So this line:<br />
+</p>
+<pre><code data-language="php">$app->resource('albums');</code></pre>
+
+<p>Is equivalent to all of the following routes:</p>
+<pre><code data-language="php">$app->get('/albums', 'albums#index');
+$app->get('/albums/new', 'albums#new_');
+$app->post('/albums/create', 'albums#create');
+$app->get('/albums/:id/edit', 'albums#edit');
+$app->post('/albums/:id/update', 'albums#update');
+$app->post('/albums/:id/delete', 'albums#delete');
+$app->get('/albums/:id', 'albums#show');</code></pre>
+
+<p>
+    We use the name <em>new_</em>, because PHP doesn't allows <em>new</em> to be a function's name. 
+    During automatic template rendering, Marley will therefore look for a template file called <em>/album/new_.html.php</em>
+</p>
+
+<h4>Is Rails way better?</h4>
+<p>
+    If you follow the naming conventions described above, you'll be writing much less code. Out of the box, different parts of the application will be automatically connected!
+</p>
+<p>
+    But, there's no definite answer. From a practical expierience, 
+    Rails way of routing and code organization is preferable for large appliations while Sinatra's way 
+    is more suitable for small, single page apps. <br /><br />
+    In the end, it's entirely your call, that's why Marley gives you a choice.
+</p>
+
+</div>
+
+
+
+<div class="wrapper code">
+<h3>Rendering</h3>
+
+<p>
+    In the previous sections, we explored some basic functionality of the <em>$this->render()</em> method. 
+    Let's now dig into other types of its usage.
+</p>
+
+<h4>Searching a template file</h4>
+<p>There are three different ways to specify template path to the render() method: </p>
+<p>1. Relative to a controller directory inside the templates directory or relative to the templates directory.</p>
+<pre><code data-language="php">$this->render('edit');</code></pre>
+<p>If you're using Sinatra-style routing, this will search for a file called <em>/views/edit.html.php</em> or if you're using Rails-style routing and controller is called "Album", this will search for a file called <em>/views/album/edit.html.php</em></p>
+
+<p>2. Relative to the templates directory.</p>
+<pre><code data-language="php">$this->render('shared/item');</code></pre>
+<p>No matter what style of routing you are using, this will always search files relative to the templates directory, in this example it will search for a file called <em>/views/shared/item.html.php</em></p>
+
+<p>3. Absolute path.</p>
+<pre><code data-language="php">$this->render('/var/www/views/crazy');</code></pre>
+<p>If the name starts with a slash, Marley assumes its an absolute path, so it will search for a file called <em>/var/www/views/crazy.html.php</em></p>
+
+<h4>Partials</h4>
+<p>
+    Partial templates are lightweight template snippets that you can use inside other templates. <br />
+    By convention, partial template names should start with underscore `_` character.
+</p>
+<p>
+    So, for example, if we have a directory structure like this:
+</p>
+<pre class="no-color"><code>/app
+  /views
+    _list_item.html.php
+    index.html.php
+    artists.html.php
+  index.php</code></pre>
+
+<p>Both, <em>index</em> and <em>artists</em> templates can use <em>_list_item</em> partial template to render something.</p>
+
+<pre><code data-language="php"># index.php
+
+$app->get('/', function($name, $id) {
+    $this->data->site_title = 'Welcome to the Index page.';
+    $this->data->artists = [
+        ['name' => 'Coldplay', 'year' => 1977],
+        ['name' => 'Queen', 'year' => 1946],
+        ['name' => 'Marley', 'year' => 1945]
+    ];
+    $this->render('index');
+});
+
+$app->get('/artists', function($name, $id) {
+    $this->data->artists = [
+        ['name' => 'Coldplay', 'year' => 1977],
+        ['name' => 'Queen', 'year' => 1946],
+        ['name' => 'Marley', 'year' => 1945]
+    ];
+    $this->render('artist');
+});</code></pre>
+
+<pre><code data-language="html">&#x3C;!-- /views/_list_item.html.php --&#x3E;
+
+&#x3C;li&#x3E;
+    &#x3C;b&#x3E;&#x3C;?=$name?&#x3E;&#x3C;/b&#x3E;, Year: &#x3C;?=$year?&#x3E; 
+&#x3C;/li&#x3E;</code></pre>
+
+<pre><code data-language="html">&#x3C;!-- /views/index.html.php --&#x3E;
+
+&#x3C;div class=&#x22;index-page&#x22;&#x3E;
+    &#x3C;h2&#x3E;&#x3C;?=site_title?&#x3E;&#x3C;/h2&#x3E;
+    &#x3C;ul&#x3E;
+        &#x3C;? foreach ($artists as $artist) : ?&#x3E;
+            &#x3C;? $this-&#x3E;render([&#x27;partial&#x27; =&#x3E; &#x27;_list_item&#x27;, &#x27;data&#x27; =&#x3E; $artist]); ?&#x3E;
+        &#x3C;? endforeach; ?&#x3E;
+    &#x3C;/ul&#x3E;
+&#x3C;/div&#x3E;</code></pre>
+
+<pre><code data-language="html">&#x3C;!-- /views/artists.html.php --&#x3E;
+
+&#x3C;div class=&#x22;artists-list&#x22;&#x3E;
+    &#x3C;ul&#x3E;
+        &#x3C;? foreach ($artists as $artist) : ?&#x3E;
+            &#x3C;? $this-&#x3E;render([&#x27;partial&#x27; =&#x3E; &#x27;_list_item&#x27;, &#x27;data&#x27; =&#x3E; $artist]); ?&#x3E;
+        &#x3C;? endforeach; ?&#x3E;
+    &#x3C;/ul&#x3E;
+&#x3C;/div&#x3E;</code></pre>
+
+<p>The result of the `/` index route will be this:</p>
+<pre><code data-language="html">&#x3C;div class=&#x22;index-page&#x22;&#x3E;
+    &#x3C;h2&#x3E;Welcome to the Index page.&#x3C;/h2&#x3E;
+    &#x3C;ul&#x3E;
+        &#x3C;li&#x3E;&#x3C;b&#x3E;Coldplay&#x3C;/b&#x3E;, Year: 1977&#x3C;/li&#x3E;
+        &#x3C;li&#x3E;&#x3C;b&#x3E;Queen&#x3C;/b&#x3E;, Year: 1946&#x3C;/li&#x3E;
+        &#x3C;li&#x3E;&#x3C;b&#x3E;Marley&#x3C;/b&#x3E;, Year: 1945&#x3C;/li&#x3E;
+    &#x3C;/ul&#x3E;
+&#x3C;/div&#x3E;</code></pre>
+
+<p>And the result of the `/artists` route will be this:</p>
+<pre><code data-language="html">&#x3C;div class=&#x22;artists-list&#x22;&#x3E;
+    &#x3C;ul&#x3E;
+        &#x3C;li&#x3E;&#x3C;b&#x3E;Coldplay&#x3C;/b&#x3E;, Year: 1977&#x3C;/li&#x3E;
+        &#x3C;li&#x3E;&#x3C;b&#x3E;Queen&#x3C;/b&#x3E;, Year: 1946&#x3C;/li&#x3E;
+        &#x3C;li&#x3E;&#x3C;b&#x3E;Marley&#x3C;/b&#x3E;, Year: 1945&#x3C;/li&#x3E;
+    &#x3C;/ul&#x3E;
+&#x3C;/div&#x3E;</code></pre>
+
+
+
+<h4>JSON</h4>
+<p>Render a JSON data with HTTP content-type <em>application/json</em></p>
+<pre><code data-language="php">$album = [
+    "name" => "Innuendo", 
+    "year" => 1991, 
+    "artist" => "Queen",
+    "tracks" => [
+        "Innuendo",
+        "I'm Going Slightly Mad",
+        "Headlong",
+        "I Can't Live with You",
+        "Ride the Wild Wind",
+        "All God's People",
+        "These Are the Days of Our Lives",
+        "Delilah",
+        "Don't Try So Hard",
+        "The Hitman",
+        "Bijou",
+        "The Show Must Go On"
+    ]
+];
+
+$this->render(['json' => $album]);</code></pre>
+
+<p>Outputs:</p>
+<pre><code data-language="javascript">{
+    "name": "Innuendo",
+    "year": 1991,
+    "artist": "Queen",
+    "tracks": [
+        "Innuendo",
+        "I'm Going Slightly Mad",
+        "Headlong",
+        "I Can't Live with You",
+        "Ride the Wild Wind",
+        "All God's People",
+        "These Are the Days of Our Lives",
+        "Delilah",
+        "Don't Try So Hard",
+        "The Hitman",
+        "Bijou",
+        "The Show Must Go On"
+    ]
+}</code></pre>
+
+
+<h4>Javascript</h4>
+<p>Render an output with HTTP content-type <em>text/javascript</em>.</p>
+<pre><code data-language="php">$app->get('/dynamic-javascript', function() {
+    $this->render(['js' => 'var year = 1945; console.log(year);']);
+});</code></pre>
+<pre><code data-language="html">&#x3C;!-- inside some template file --&#x3E;
+&#x3C;script src=&#x22;/dynamic-javascript&#x22;&#x3E;&#x3C;/script&#x3E;</code></pre>
+
+<p>Check-out the console :)</p>
+
+
+<h4>Plain text</h4>
+<p>Render an output with HTTP content-type <em>text/plain</em>.</p>
+<pre><code data-language="php">$this->render(['plain' => 'Hello']);</code></pre>
+<p>HTTP response:</p>
+<pre class="no-color"><code>HTTP/1.1 200 OK
+Content-Type: text/plain; charset=UTF-8
+Hello</code></pre>
+
+<h4>HTML</h4>
+<p>Render an output with HTTP content-type <em>text/html</em>.</p>
+<pre><code data-language="php">$this->render(['html' => '<h1>Hello</h1>']);</code></pre>
+<p>HTTP response:</p>
+<pre class="no-color"><code>HTTP/1.1 200 OK
+Content-Type: text/html; charset=UTF-8
+&lt;h1&gt;Hello&lt;/h1&gt;</code></pre>
+
+<h4>Different HTTP status code</h4>
+<p>Render an output with HTTP content-type <em>text/html</em> and error code <em>404</em></p>
+<pre><code data-language="php">$this->render(['html' => '<h1>Hello</h1>', 'status' => 404]);</code></pre>
+<p>HTTP response:</p>
+<pre class="no-color"><code>HTTP/1.1 404 Not Found
+Content-Type: text/html; charset=UTF-8
+&lt;h1&gt;Hello&lt;/h1&gt;</code></pre>
+</div>
+
+
+
+
+<div class="wrapper code">
+<h3>Sharing</h3>
+
+<p>
+    Often you'll need global objects, functions and variables to be accessible inside templates and controllers. 
+    Marley gives you a share() method that does exactly that.
+</p>
+<p>
+    So, for example, if we have a global database object that has a function <em>get_user_info()</em> 
+    and a user object that holds users data like <em>is_authenticated</em>, <em>name</em>, <em>age</em> and etc.
+</p>
+<pre><code data-language="php">// Global objects
+$db = new DatabaseHelper();
+$user = new User();
+
+// Marley
+$app = new Marley();
+
+// Share global obects to Marley's templates and controllers.
+$app->share('db', $db);
+$app->share('user', $user);
+
+// Use shared objects inside a callback function.
+// $this->db is the shared database object and
+// $this->user is the shared user object.
+$app->get('/profile', function() {
+    if ($this->user->is_authenticated) {
+        $this->data->info = $this->db->get_user_info();
+        $this->render('profile');
+    } else {
+        $this->redirect('/auth/login');
+    }
+});
+</code></pre>
+
+<p>You can also initialize classes directly as shared objects, so the above code could be rewritten like this:</p>
+<pre><code data-language="php">$app->share('db', new DatabaseHelper());
+$app->share('user', new User());</code></pre>
+
+<p>Sharing functions is also possible:</p>
+<pre><code data-language="php">$app->share('print_escaped', function($str) {
+    print htmlentities($str, ENT_QUOTES, 'UTF-8');
+});
+
+$app->get('/artist/:name', function($name) {
+    $this->print_escaped($name); 
+});</code></pre>
+
+<p>And you can use shared objects and functions inside a template as well.</p>
+<pre><code data-language="html">&lt;!-- /views/profile.html.php --&gt;
+
+&lt;? if ($this-&gt;user-&gt;is_authenticated) : ?&gt;
+    &lt;h2&gt;Hello: &lt;?=$this-&gt;user-&gt;name?&gt;&lt;/h2&gt;
+    &lt;span&gt;You are &lt;?=$this-&gt;user-&gt;age?&gt; years old.&lt;/span&gt;
+&lt;? endif; ?&gt;</code></pre>
+
+</div>
+
+
+
+
+<div id="webserver-configuration" class="wrapper code">
+<h3>Web server configuration</h3>
+<p>Here are configuration snippets for common web servers to redirect "non-file" requests to index.php</p>
+
+<pre><code data-language="php"># Apache .htaccess
+
+&lt;IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.php [QSA,L]
+&lt;/IfModule></code></pre>
+
+<pre><code data-language="php"># nginx
+
+server {
+    location / {
+        try_files $uri /index.php;
+    }
+}</code></pre>
+</div>
+
+
+<div class="wrapper footer">
+    Designed and built by <a href="http://github.com/coloraggio">Lasha Tavartkiladze</a> at <a href="http://elva.org" target="_blank">Elva</a> | Code and documentation are licensed under the <a href="http://opensource.org/licenses/MIT">MIT license</a>
+</div>
+
+</body>
+</html>
