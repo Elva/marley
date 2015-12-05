@@ -1,7 +1,7 @@
 Marley
 ======
 PHP library for solving common web application development problems:  
-code organization, routing and templating.
+code organization, routing and templating.  
 http://marley.elva.org  
 
 <p>&nbsp;</p>
