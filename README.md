@@ -1,8 +1,12 @@
+* * *
+This library is no longer maintained. It was working well in production when we wrote and used it in 2014 (and still works on those websites), but we moved to Node.js since then. i.e. Use it at your own risk.
+* * *
+
 Marley
 ======
 PHP library for solving common web application development problems:  
 code organization, routing and templating.  
-http://marley.elva.org  
+https://elva.github.io/marley
 
 <p>&nbsp;</p>
 
