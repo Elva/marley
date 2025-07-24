@@ -1,7 +1,3 @@
-* * *
-This library is no longer maintained. It was working well in production when we wrote and used it in 2014 (and still works on those websites), but we moved to Node.js since then. i.e. Use it at your own risk.
-* * *
-
 Marley
 ======
 PHP library for solving common web application development problems:  
@@ -71,5 +67,5 @@ Compare it to other "micro" frameworks: *(Stats date: 27.07.2014)*
 
 * * *
 
-Designed and built by <a href="http://github.com/coloraggio">Lasha Tavartkiladze</a> at <a href="http://elva.org" target="_blank">Elva</a>  
+Designed and built by <a href="http://github.com/ltbits">Lasha Tavartkiladze</a> at <a href="http://elva.org" target="_blank">Elva</a>  
 Code and documentation are licensed under the <a href="http://opensource.org/licenses/MIT">MIT license</a>

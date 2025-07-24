@@ -8,8 +8,6 @@
 
     Lasha Tavartkiladze
     2014-11-27
-
-    http://marley.elva.org
 */
 
 
